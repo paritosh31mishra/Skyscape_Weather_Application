@@ -1,44 +1,23 @@
+require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
+
 const app = express();
-
-// use cross origin for frontend-backend communication
-const cors = require('cors'); // calling cross origin library
-
-
-const allowedOrigins = [
-  "http://localhost:3000", // Local development
-  "https://weather-application-1-reactapp.onrender.com" // Hosted frontend
-];
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true); // Allow the request
-      } else {
-        callback(new Error("Not allowed by CORS")); // Block the request
-      }
-    },
-    credentials: true, // Include credentials (if needed)
-  })
-);
-
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000' }));
 app.use(express.json());
 
+app.use('/auth', require('./routes/auth'));
+app.use('/weather', require('./routes/weather'));
+app.get('/', (req, res) => res.json({ message: 'Weather API is running' }));
 
+const port = process.env.PORT || 5557;
+const mongoUrl = process.env.MONGODB_URI;
+if (!mongoUrl) {
+  console.error('Set MONGODB_URI in backend/.env before starting the server.');
+  process.exit(1);
+}
 
-//database connection code start
-const mongoose = require('mongoose'); // importing mongodb compiler
-
-mongoose.connect(
-  "mongodb+srv://mishraparitosh31:pari31tosh@cluster0.nskf6.mongodb.net/Open_weather?retryWrites=true&w=majority&appName=Cluster0", 
-  { useNewUrlParser: true, useUnifiedTopology: true }
-)
-  .then(() => console.log("Database Connected..."))
-  .catch((error) => console.error("Database connection failed:", error));
-
-
-const Weather = require('../backend/api/weatherapi');   
-app.use('/weather', Weather); // http://localhost:5657/weather - post
-
-app.listen(5557, () => console.log('The server is live now....'));
+mongoose.connect(mongoUrl)
+  .then(() => app.listen(port, () => console.log(`Weather API listening on port ${port}`)))
+  .catch((error) => { console.error('MongoDB connection failed:', error.message); process.exit(1); });

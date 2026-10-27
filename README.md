@@ -10,6 +10,7 @@ Skyscape is a responsive weather application for checking current conditions and
 - View an hourly forecast for each available forecast date. Choose a date with the date picker, then scroll horizontally inside the hourly panel to see its hours.
 - View a seven-day forecast and local sunrise and sunset times.
 - Switch between Celsius and Fahrenheit.
+- Switch between light and dark themes; the selected theme is remembered in the browser.
 - Save and remove favorite places. Favorites are kept in that browser's local storage.
 - See the hero illustration reflect local day or night and the current weather conditions. At night it shows an estimated lunar phase.
 - Receive refreshed weather conditions every ten minutes while the dashboard is open.
